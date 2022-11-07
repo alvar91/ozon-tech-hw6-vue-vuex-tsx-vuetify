@@ -1,0 +1,1221 @@
+info:
+  description: Chats API
+  title: Swagger
+  version: 1.0.0
+host: 62.113.98.233:5000
+basePath: /api/v2
+produces:
+  - application/json
+  - application/xml
+schemes:
+  - http
+swagger: '2.0'
+paths:
+  /auth/signup:
+    post:
+      parameters:
+        - name: signUpRequest
+          in: body
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/SignUpRequest'
+      description: ''
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/SignUpResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Sign up (create user)
+  /auth/signin:
+    post:
+      parameters:
+        - name: signInRequest
+          in: body
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/SignInRequest'
+      description: ''
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Sign in
+  /auth/user:
+    get:
+      parameters: []
+      description: ''
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: An array of user info
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Get user info
+  /auth/logout:
+    post:
+      parameters: []
+      description: ''
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Ok
+        '500':
+          description: Unexpected error
+      summary: Logout
+
+  /chats:
+    get:
+      parameters:
+        - in: query
+          name: offset
+          schema:
+          type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+          type: integer
+          description: The numbers of items to return
+        - in: query
+          name: title
+          schema:
+          type: string
+          description: Chat's title to filter by
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChatsResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Get chats
+    post:
+      parameters:
+        - name: createChatRequest
+          in: body
+          description: Chat data
+          required: true
+          schema:
+            $ref: '#/definitions/CreateChatRequest'
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Create chat
+    delete:
+      parameters:
+        - name: deleteChatRequest
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/ChatDeleteRequest'
+      description: 'Delete works only for admin role.'
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/ChatDeleteResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Unexpected error
+      summary: Delete chat by ID
+
+  /chats/archive:
+    get:
+      parameters:
+        - in: query
+          name: offset
+          schema:
+          type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+          type: integer
+          description: The numbers of items to return
+        - in: query
+          name: title
+          schema:
+          type: string
+          description: Chat's title to filter by
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChatsResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Get archived chats
+    post:
+      parameters:
+        - name: archiveChatRequest
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/ChatArchiveRequest'
+      description: 'Archive chat'
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/ChatArchiveResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Unexpected error
+      summary: Archive chat by ID
+
+  /chats/unarchive:
+    post:
+      parameters:
+        - name: unarchiveChatRequest
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/ChatArchiveRequest'
+      description: 'UnArchive chat'
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/ChatArchiveResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Unexpected error
+      summary: UnArchive chat by ID
+
+  /chats/{id}/common:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric chat id
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChatsResponse'
+        '400':
+          description: BadRequest
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found chat
+        '500':
+          description: Unexpected error
+      summary: Get common chat with current chat user (only works for two users chats)
+
+  /chats/{id}/users:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric chat id
+        - in: query
+          name: offset
+          schema:
+          type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+          type: integer
+          description: The numbers of items to return
+        - in: query
+          name: name
+          schema:
+          type: string
+          description: User's '{first_name} {second_name}' to filter
+        - in: query
+          name: email
+          schema:
+          type: string
+          description: User's email to filter
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChatUserResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found chat
+        '500':
+          description: Unexpected error
+      summary: Get chat users
+
+  /chats/new/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric chat id
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/UnreadCountResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Get new messages count
+  /chats/users:
+    put:
+      parameters:
+        - name: usersRequest
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/UsersRequest'
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Add users to chat
+    delete:
+      parameters:
+        - name: usersRequest
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/UsersRequest'
+      description: ''
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Delete users from chat
+
+  /chats/token/{id}:
+    post:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric chat id
+      description: 'Request token to connect to messages server'
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChatsMessagesTokenResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Get chat users
+  /oauth/yandex:
+    post:
+      parameters:
+        - name: OauthSignInRequest
+          in: body
+          description: Oauth data
+          required: true
+          schema:
+            $ref: '#/definitions/OauthSignInRequest'
+      description: ''
+      tags:
+        - Oauth
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request (No such redirect_uri or wrong code)
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Sign in / sign up with yandex
+  /oauth/yandex/service-id:
+    get:
+      parameters:
+        - in: query
+          name: redirect_uri
+          schema:
+          type: string
+          description: Redirect uri that you are using for oauth
+      description: ''
+      tags:
+        - Oauth
+      responses:
+        '200':
+          description: Yandex client id
+          schema:
+            $ref: '#/definitions/ServiceId'
+        '400':
+          description: Bad Request (No such redirect_uri refistered)
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '500':
+          description: Unexpected error
+      summary: Get service id
+  /user/profile:
+    put:
+      parameters:
+        - name: userRequest
+          in: body
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/UserUpdateRequest'
+      description: ''
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Change user profile
+  /user/profile/avatar:
+    put:
+      parameters:
+        - name: avatar
+          in: formData
+          description: Avatar
+          required: true
+          type: file
+      consumes: ['multipart/form-data']
+      description: ''
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Change user avatar
+  /user/password:
+    put:
+      parameters:
+        - name: changePasswordRequest
+          in: body
+          description: Password request
+          required: true
+          schema:
+            $ref: '#/definitions/ChangePasswordRequest'
+      description: ''
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Change user password
+  /user/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric user id
+      description: ''
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Get user by id
+  /user/search:
+    post:
+      parameters:
+        - name: findUserRequest
+          in: body
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/FindUserRequest'
+      description: ''
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unexpected error
+      summary: Search for user by login (max 10)
+
+definitions:
+  UserResponse:
+    example:
+      id: 123
+      first_name: Petya
+      second_name: Pupkin
+      display_name: Petya Pupkin
+      login: userLogin
+      email: my@email.com
+      phone: "89223332211"
+      avatar: /path/to/avatar.jpg
+    required:
+      - id
+      - first_name
+      - second_name
+      - display_name
+      - login
+      - email
+      - phone
+      - avatar
+    properties:
+      id:
+        type: integer
+        description: User id
+      first_name:
+        type: string
+        description: First name
+      second_name:
+        type: string
+        description: Second name
+      display_name:
+        type: string
+        description: Display name
+      login:
+        type: string
+        description: User login - unique
+      email:
+        type: string
+        description: Email
+      phone:
+        type: string
+        description: Phone
+      avatar:
+        type: string
+        description: Avatar
+  SignUpRequest:
+    required:
+      - first_name
+      - second_name
+      - login
+      - email
+      - password
+      - phone
+    properties:
+      first_name:
+        type: string
+        description: First name
+      second_name:
+        type: string
+        description: Second name
+      login:
+        type: string
+        description: User login - unique
+      email:
+        type: string
+        description: Email /^\S+@\S+$/
+      password:
+        type: string
+        description: Password
+      phone:
+        type: string
+        description: 'Phone /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/'
+  SignInRequest:
+    required:
+      - login
+      - password
+    properties:
+      login:
+        type: string
+        description: User login
+      password:
+        type: string
+        description: Password
+  SignUpResponse:
+    required:
+      - id
+    properties:
+      id:
+        type: number
+        description: Created User ID
+  CreateChatRequest:
+    required:
+      - title
+    properties:
+      title:
+        type: string
+        description: Chat title
+  UsersRequest:
+    required:
+      - users
+      - chatId
+    properties:
+      users:
+        type: array
+        items:
+          type: integer
+      chatId:
+        type: integer
+        description: Chat id
+  ChatsResponse:
+    example:
+      id: 123
+      title: my-chat
+      avatar: /123/avatar1.jpg
+      unread_count: 15
+      last_message:
+        user:
+          first_name: Petya
+          second_name: Pupkin
+          avatar: /path/to/avatar.jpg
+          email: my@email.com
+          login: userLogin
+          phone: 8(911)-222-33-22
+        time: 2020-01-02 14:22:22Z
+        content: this is message content
+    required:
+      - id
+      - title
+      - avatar
+      - unread_count
+      - last_message
+    properties:
+      id:
+        type: integer
+        description: Chat id
+      title:
+        type: string
+        description: Chat title
+      avatar:
+        type: string
+        description: Chat avatar
+      unread_count:
+        type: integer
+        description: Number of unread messages in chat for current user
+      last_message:
+        type: object
+        properties:
+          user:
+            type: object
+            $ref: '#/definitions/UserResponse'
+            format: date-time
+            description: Message user (sender)
+          time:
+            type: string
+            format: timestamp
+            description: Message timestamp
+          content:
+            type: string
+            description: Message content
+
+  ChatDeleteRequest:
+    required:
+      - chatId
+    properties:
+      chatId:
+        type: integer
+        description: Chat id
+  ChatDeleteResponse:
+    example:
+      userId: 12
+      result:
+        id: 123
+        title: deleted-chat
+        avatar: /123/avatar1.jpg
+    required:
+      - userId
+      - result
+    properties:
+      userId:
+        type: integer
+        description: User id
+      result:
+        type: object
+        $ref: '#/definitions/ChatsResponse'
+  ChatArchiveRequest:
+    required:
+      - chatId
+    properties:
+      chatId:
+        type: integer
+        description: Chat id
+  ChatArchiveResponse:
+    required:
+      - userId
+      - result
+    properties:
+      userId:
+        type: integer
+        description: User id
+      result:
+        type: object
+        $ref: '#/definitions/ChatsResponse'
+  ChatsMessagesTokenResponse:
+    required:
+      - token
+    properties:
+      token:
+        type: string
+        description: Token for web socket server
+  UnreadCountResponse:
+    example:
+      unread_count: 12
+    required:
+      - unread_count
+    properties:
+      unread_count:
+        type: integer
+        description: New messages count
+  LeaderboardNewLeaderRequest:
+    required:
+      - data
+      - ratingFieldName
+    properties:
+      data:
+        type: object
+        description: 'Leaderboard data object, any type'
+      ratingFieldName:
+        type: string
+        description: >-
+          Which field is used to sort (if new value of the field more than old,
+          data is stored)
+      teamName:
+        type: string
+        description: >-
+          Your team name. Used to make unique leaderboard for each project.
+  LeaderboardRequest:
+    required:
+      - ratingFieldName
+      - cursor
+      - limit
+    properties:
+      ratingFieldName:
+        type: string
+        description: Which field is used to sort
+      cursor:
+        type: integer
+        description: Used to paginate between pages. If limit is 10, then for the 1st page - cursor=0, for the 2nd page - cursor=10.
+      limit:
+        type: integer
+        description: Maximum amount of leaders to return
+  OauthSignInRequest:
+    required:
+      - code
+      - redirect_uri
+    properties:
+      code:
+        type: string
+        description: User code from Yandex
+      redirect_uri:
+        type: string
+        description: Redirect uri that you are using for oauth
+  ServiceId:
+    required:
+      - service_id
+    properties:
+      service_id:
+        type: string
+        description: Service id
+  BadRequestError:
+    required:
+      - reason
+    properties:
+      reason:
+        type: string
+        description: Error message
+  UserUpdateRequest:
+    required:
+      - first_name
+      - second_name
+      - display_name
+      - phone
+      - login
+      - email
+    properties:
+      first_name:
+        type: string
+        description: First name
+      second_name:
+        type: string
+        description: Second name
+      display_name:
+        type: string
+        description: Display Name
+      login:
+        type: string
+        description: User login - unique
+      email:
+        type: string
+        description: Email
+      phone:
+        type: string
+        description: Phone
+  UserRequest:
+    required:
+      - first_name
+      - second_name
+      - display_name
+      - phone
+      - login
+      - email
+    properties:
+      first_name:
+        type: string
+        description: First name
+      second_name:
+        type: string
+        description: Second name
+      display_name:
+        type: string
+        description: Display Name
+      login:
+        type: string
+        description: User login - unique
+      email:
+        type: string
+        description: Email
+      phone:
+        type: string
+        description: Phone
+  FindUserRequest:
+    required:
+      - login
+    properties:
+      login:
+        type: string
+        description: User login (beginning of login)
+  ChangePasswordRequest:
+    required:
+      - oldPassword
+      - newPassword
+    properties:
+      oldPassword:
+        type: string
+        description: Old password
+      newPassword:
+        type: string
+        description: New password
+  Resource:
+    example:
+      id: 123
+      user_id: 231
+      path: /32543654dsf/434534r3rsddfs_my-file.jpg
+      filename: my-file.jpg
+      content_type: image/jpeg
+      content_size: 543672
+      upload_date: 2020-01-02 14:22:22Z
+    required:
+      - id
+      - user_id
+      - path
+      - filename
+      - content_type
+      - content_size
+      - upload_date
+    properties:
+      id:
+        type: integer
+        description: Message id
+      user_id:
+        type: integer
+        description: User id
+      path:
+        type: string
+        description: Server relative file path
+      filename:
+        type: string
+        description: Initial file name
+      content_type:
+        type: string
+        description: File content type (e.g "image/jpeg" for .jpg images)
+      content_size:
+        type: integer
+        description: File size in bytes
+      upload_date:
+        type: string
+        format: date-time
+        description: Resource uploading time
+
+  ChatMessage:
+    example:
+      id: 123
+      user_id: 231
+      chat_id: 312
+      time: 2020-01-02 14:22:22Z
+      type: file
+      content: 132
+      file:
+        id: 132
+        user_id: 231
+        path: /32543654dsf/434534r3rsddfs_my-file.jpg
+        filename: my-file.jpg
+        content_type: image/jpeg
+        content_size: 543672
+        upload_date: 2020-01-02 14:22:22Z
+    required:
+      - id
+      - user_id
+      - chat_id
+      - time
+      - type
+      - content
+    properties:
+      id:
+        type: integer
+        description: Message id
+      user_id:
+        type: integer
+        description: User id
+      chat_id:
+        type: integer
+        description: Chat id
+      time:
+        type: string
+        format: date-time
+        description: Message sent time
+      type:
+        type: string
+        enum: [ message, file ]
+        description: Message type
+      content:
+        type: string
+        description: Message content (message text for messages and resourceId for files)
+      file:
+        $ref: '#/definitions/Resource'
+        description: File
+  ChatUserResponse:
+    example:
+      id: 123
+      first_name: petya
+      second_name: petrov
+      display_name: petya petrov
+      login: my-login
+      email: my@email.com
+      phone: "89223332211"
+      avatar: /path/to/my-file.jpg
+      role: admin
+    required:
+      - id
+      - first_name
+      - second_name
+      - display_name
+      - login
+      - email
+      - phone
+      - avatar
+      - role
+    properties:
+      id:
+        type: integer
+        description: User id
+      first_name:
+        type: string
+        description: First name
+      second_name:
+        type: string
+        description: Second name
+      display_name:
+        type: string
+        description: Display name
+      login:
+        type: string
+        description: User login - unique
+      email:
+        type: string
+        description: Email
+      phone:
+        type: string
+        description: Phone
+      avatar:
+        type: string
+        description: Avatar
+      role:
+        type: string
+        enum: [admin, regular]
+        description: User role
+  StaticChartRequest:
+    required:
+      - chartSize
+    properties:
+      chartSize:
+        type: string
+        description: Number of points in chart (10 / 100 / 1000)
+        enum: [ small, medium, large  ]
+  LiveChartRequest:
+    required:
+      - next
+    properties:
+      next:
+        type: number
+        format: integer
+        default: 0
+        description: Works as a cursor (initial value should be zero, all the next values are taken from the backend response)
+  ChartSchema:
+    type: array
+    items:
+      type: object
+      properties:
+        x:
+          type: string
+          format: date-time
+          description: X axis (datetime)
+        y1:
+          type: number
+          format: float
+        y2:
+          type: number
+          format: float
+  StaticChartResponse:
+    properties:
+      data:
+        $ref: '#/definitions/ChartSchema'
+        description: Chart points
+  LiveChartResponse:
+    properties:
+      next:
+        type: integer
+        example: 5
+        description: Used as a cursor (pass this value to the next request)
+      data:
+        $ref: '#/definitions/ChartSchema'
+        description: Chart points
+  LiveVideoInfoRequest:
+    required:
+      - iteration
+    properties:
+      iteration:
+        type: number
+        format: integer
+        default: 0
+        description: Works as a cursor (iterate + 1 each request)
+  VideoInfoResponse:
+    required:
+      - size
+    properties:
+      size:
+        type: number
+        format: integer
+        example: 4096
+        description: Video size in bytes
+  Sticker:
+    type: object
+    properties:
+      id:
+        type: number
+        format: integer
+        example: 123
+        description: Sticker id (send to chat with WS)
+      path:
+        type: string
+        example: /stickers/2346-dfsg-425-sdfs/14534.gif
+        description: Url for sticker resource(image)
+  StickerPack:
+    type: object
+    properties:
+      title:
+        type: string
+        example: pack-title
+        description: Sticker pack title
+      user_id:
+        type: number
+        format: integer
+        example: 123
+        description: User id that created this pack
+      stickers:
+        type: array
+        items:
+          type: string
+          example: /stickers/2346-dfsg-425-sdfs/14534.gif
+          description: Url for sticker resource(image)
+  StickerPacksResponse:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/StickerPack'
+        description: StickerPacks
+  StickersResponse:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Sticker'
+        description: Stickers
+responses: {}
+parameters: {}
+securityDefinitions: {}
+tags:
+  - name: Auth
+    description: Auth operations
+  - name: Chats
+    description: Chats operations
+  - name: Leaderboard
+    description: Leaderboard operations (prefix /game/api/v2)
+  - name: Oauth
+    description: Oauth service
+  - name: Users
+    description: Users operations
+  - name: Charts
+    description: Charts operations
+  - name: Videos
+    description: Videos operations
+  - name: Stickers
+    description: Stickers operations
